@@ -24,13 +24,6 @@ jobs:
         run: |
           git subtree split --prefix=ahrefs -b split-ahrefs
 
-      - name: Check secret exists and length
-        env:
-          MY_SECRET: ${{ secrets.SYNC_REPO_TOKEN }}
-        run: |
-            echo "MY_SECRET length: ${#MY_SECRET}"
-            echo "MY_SECRET length: ${#MY_SECRET}"
-
       - name: Push ahrefs to RepoSEO
         env:
           TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
