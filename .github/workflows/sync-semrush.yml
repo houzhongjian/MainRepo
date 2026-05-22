@@ -1,0 +1,63 @@
+name: Sync Monorepo Subfolders
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-semrush:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+      - name: Check source semrush folder
+        run: |
+          echo "Current repo:"
+          pwd
+          ls -la
+          echo "Source semrush:"
+          ls -la semrush
+          find semrush -maxdepth 2 -type f | head -30
+
+      - name: Clone RepoSEO
+        env:
+          TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
+        run: |
+          git clone https://x-access-token:${TOKEN}@github.com/TestMainRepo/RepoSEO.git target-repo
+
+      - name: Sync semrush into RepoSEO
+        run: |
+          rm -rf target-repo/semrush
+          mkdir -p target-repo/semrush
+
+          cp -a semrush/. target-repo/semrush/
+
+          echo "Target semrush:"
+          ls -la target-repo/semrush
+          find target-repo/semrush -maxdepth 2 -type f | head -30
+
+      - name: Commit and push to RepoSEO
+        run: |
+          cd target-repo
+
+          git status
+          git add -A semrush
+          git status
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Sync semrush folder"
+            git push origin HEAD:main
+          fi
