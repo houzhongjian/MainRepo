@@ -36,6 +36,5 @@ jobs:
           MY_SECRET: ${{ secrets.SYNC_REPO_TOKEN }}
         run: |
           echo "${#MY_SECRET}"
-          echo "${#SYNC_REPO_TOKEN}"
           echo "${#secrets.SYNC_REPO_TOKEN}"
           git push https://x-access-token:${{ secrets.SYNC_REPO_TOKEN }}@github.com/TestMainRepo/RepoSEO.git split-ahrefs:main --force
