@@ -33,4 +33,4 @@ jobs:
           git remote add ahrefs https://github.com/TestMainRepo/RepoSEO.git
           git remote set-url ahrefs https://x-access-token:$TOKEN@github.com/TestMainRepo/RepoSEO.git
       
-          git push seo split-ahrefs:main --force
+          git push ahrefs split-ahrefs:main --force
