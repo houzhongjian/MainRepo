@@ -33,8 +33,8 @@ jobs:
 
       - name: Push ahrefs to RepoSEO
         env:
-          MY_SECRET: ${{ secrets.SYNC_REPO_TOKEN }}
+          TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
         run: |
-          echo "${#MY_SECRET}"
-          echo "${#secrets.SYNC_REPO_TOKEN}"
-          git push https://x-access-token:${{ secrets.SYNC_REPO_TOKEN }}@github.com/TestMainRepo/RepoSEO.git split-ahrefs:main --force
+          echo "TOKEN LEN: ${#TOKEN}"
+          
+          git push https://x-access-token:$TOKEN@github.com/TestMainRepo/RepoSEO.git split-ahrefs:main --force
