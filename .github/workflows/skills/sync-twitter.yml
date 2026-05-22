@@ -1,0 +1,63 @@
+name: Sync Monorepo Subfolders
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-twitter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+      - name: Check source twitter folder
+        run: |
+          echo "Current repo:"
+          pwd
+          ls -la
+          echo "Source twitter:"
+          ls -la twitter
+          find twitter -maxdepth 2 -type f | head -30
+
+      - name: Clone RepoSEO
+        env:
+          TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
+        run: |
+          git clone https://x-access-token:${TOKEN}@github.com/TestMainRepo/RepoMedia.git target-repo
+
+      - name: Sync twitter into RepoSEO
+        run: |
+          rm -rf target-repo/twitter
+          mkdir -p target-repo/twitter
+
+          cp -a twitter/. target-repo/twitter/
+
+          echo "Target twitter:"
+          ls -la target-repo/twitter
+          find target-repo/twitter -maxdepth 2 -type f | head -30
+
+      - name: Commit and push to RepoSEO
+        run: |
+          cd target-repo
+
+          git status
+          git add -A twitter
+          git status
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Sync twitter folder"
+            git push origin HEAD:main
+          fi
