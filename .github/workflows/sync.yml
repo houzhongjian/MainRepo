@@ -28,10 +28,6 @@ jobs:
         env:
           MY_SECRET: ${{ secrets.SYNC_REPO_TOKEN }}
         run: |
-          if [ -z "$MY_SECRET" ]; then
-            echo "MY_SECRET is empty or not set"
-          else
-            echo "MY_SECRET is set"
             echo "MY_SECRET length: ${#MY_SECRET}"
 
       - name: Push ahrefs to RepoSEO
