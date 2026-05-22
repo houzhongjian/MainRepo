@@ -23,6 +23,25 @@ jobs:
       - name: Split ahrefs subtree
         run: |
           git subtree split --prefix=ahrefs -b split-ahrefs
+      - name: Prepare content
+        run: |
+          git checkout split-ahrefs
+
+          mkdir temp
+          shopt -s dotglob
+
+          # 移动所有文件到 temp
+          mv * temp/ || true
+
+          mkdir ahrefs
+
+          # 再移动到 ahrefs
+          mv temp/* ahrefs/ || true
+
+          rm -rf temp
+
+          git add .
+          git commit -m "Prepare ahrefs folder"
 
       - name: Push ahrefs to RepoSEO
         env:
