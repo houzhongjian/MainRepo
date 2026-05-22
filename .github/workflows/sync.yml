@@ -26,5 +26,5 @@ jobs:
 
       - name: Push ahrefs to RepoSEO
         run: |
-          echo "TOKEN LENGTH: ${{ secrets.SYNC_REPO_TOKEN }}"
+          echo "TOKEN LENGTH: ${#SYNC_REPO_TOKEN}"
           git push https://x-access-token:${{ secrets.SYNC_REPO_TOKEN }}@github.com/TestMainRepo/RepoSEO.git split-ahrefs:main --force
