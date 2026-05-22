@@ -43,13 +43,9 @@ jobs:
           git add .
           git commit -m "Prepare ahrefs folder"
 
-      - name: Push ahrefs to RepoSEO
+      - name: Push to RepoSEO
         env:
           TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
         run: |
-          echo "TOKEN LEN: ${#TOKEN}"
-          
-          git remote add ahrefs https://github.com/TestMainRepo/RepoSEO.git
-          git remote set-url ahrefs https://x-access-token:$TOKEN@github.com/TestMainRepo/RepoSEO.git
-      
-          git push ahrefs split-ahrefs:main --force
+          git remote add ahrefs https://x-access-token:${TOKEN}@github.com/TestMainRepo/RepoSEO.git
+          git push ahrefs HEAD:main --force
