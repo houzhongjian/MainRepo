@@ -1,39 +1,29 @@
-#name: Sync Split Repositories
-#
-#on:
-#  push:
-#    branches:
-#      - main
-#
-#jobs:
-#  sync-sdk:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#
-#      - name: Push sdk to repo-b
-#        run: |
-#          git config --global user.name "github-actions"
-#          git config --global user.email "actions@github.com"
-#
-#          git subtree split --prefix=sdk -b split-sdk
-#
-#          git push https://${{ secrets.REPO_B_TOKEN }}@github.com/yourname/repo-b.git split-sdk:main --force
-#
-#  sync-api:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#
-#      - name: Push api to repo-c
-#        run: |
-#          git config --global user.name "github-actions"
-#          git config --global user.email "actions@github.com"
-#
-#          git subtree split --prefix=api -b split-api
-#
-#          git push https://${{ secrets.REPO_C_TOKEN }}@github.com/yourname/repo-c.git split-api:main --force
+name: Sync Monorepo Subfolders
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-ahrefs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo-a
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Split ahrefs subtree
+        run: |
+          git subtree split --prefix=ahrefs -b split-ahrefs
+
+      - name: Push ahrefs to RepoSEO
+        run: |
+          git push https://x-access-token:${{ secrets.SYNC_REPO_TOKEN }}@github.com/TestMainRepo/RepoSEO.git split-ahrefs:main --force
