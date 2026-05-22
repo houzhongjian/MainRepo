@@ -10,42 +10,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo-a
+      - name: Checkout ahrefs
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
           persist-credentials: false
+
       - name: Configure Git
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-      - name: Split ahrefs subtree
-        run: |
-          git subtree split --prefix=ahrefs -b split-ahrefs
-      - name: Prepare content
-        run: |
-          git checkout split-ahrefs
-
-          mkdir temp
-          shopt -s dotglob
-
-          # 移动所有文件到 temp
-          mv * temp/ || true
-
-          mkdir ahrefs
-
-          # 再移动到 ahrefs
-          mv temp/* ahrefs/ || true
-
-          rm -rf temp
-
-          git add .
-          git commit -m "Prepare ahrefs folder"
-
-      - name: Push to RepoSEO
+      - name: Clone RepoSEO
         env:
           TOKEN: ${{ secrets.SYNC_REPO_TOKEN }}
         run: |
-          git remote add ahrefs https://x-access-token:${TOKEN}@github.com/TestMainRepo/RepoSEO.git
-          git push ahrefs HEAD:main --force
+          git clone https://x-access-token:${TOKEN}@github.com/TestMainRepo/RepoSEO.git target-repo
+
+      - name: Sync ahrefs folder
+        run: |
+          rm -rf target-repo/ahrefs
+          mkdir -p target-repo/ahrefs
+          cp -a ahrefs/. target-repo/ahrefs/
+
+      - name: Commit and push
+        run: |
+          cd target-repo
+          git add ahrefs
+          git commit -m "Sync ahrefs folder" || echo "No changes to commit"
+          git push origin main
