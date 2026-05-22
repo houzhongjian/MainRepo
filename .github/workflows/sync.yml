@@ -10,16 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout ahrefs
-        uses: actions/checkout@v3
+      - name: Checkout source repo
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           persist-credentials: false
 
       - name: Configure Git
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+      - name: Check source ahrefs folder
+        run: |
+          echo "Current repo:"
+          pwd
+          ls -la
+          echo "Source ahrefs:"
+          ls -la ahrefs
+          find ahrefs -maxdepth 2 -type f | head -30
 
       - name: Clone RepoSEO
         env:
@@ -27,15 +36,28 @@ jobs:
         run: |
           git clone https://x-access-token:${TOKEN}@github.com/TestMainRepo/RepoSEO.git target-repo
 
-      - name: Sync ahrefs folder
+      - name: Sync ahrefs into RepoSEO
         run: |
           rm -rf target-repo/ahrefs
           mkdir -p target-repo/ahrefs
+
           cp -a ahrefs/. target-repo/ahrefs/
 
-      - name: Commit and push
+          echo "Target ahrefs:"
+          ls -la target-repo/ahrefs
+          find target-repo/ahrefs -maxdepth 2 -type f | head -30
+
+      - name: Commit and push to RepoSEO
         run: |
           cd target-repo
-          git add ahrefs
-          git commit -m "Sync ahrefs folder" || echo "No changes to commit"
-          git push origin main
+
+          git status
+          git add -A ahrefs
+          git status
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Sync ahrefs folder"
+            git push origin HEAD:master
+          fi
