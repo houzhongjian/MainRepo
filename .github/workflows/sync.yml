@@ -30,8 +30,7 @@ jobs:
         run: |
           echo "TOKEN LEN: ${#TOKEN}"
           
-#          git push https://x-access-token:$TOKEN@github.com/TestMainRepo/RepoSEO.git split-ahrefs:main --force
-          git remote add seo https://github.com/TestMainRepo/RepoSEO.git
-          git remote set-url seo https://x-access-token:$TOKEN@github.com/TestMainRepo/RepoSEO.git
+          git remote add ahrefs https://github.com/TestMainRepo/RepoSEO.git
+          git remote set-url ahrefs https://x-access-token:$TOKEN@github.com/TestMainRepo/RepoSEO.git
       
           git push seo split-ahrefs:main --force
